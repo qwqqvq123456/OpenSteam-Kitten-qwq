@@ -347,12 +347,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Try deleting this empty scheduled run
-        if: steps.check.outputs.need_update != 'true' && github.event_name == 'schedule'
+      - name: Clean old scheduled workflow runs
+        if: always()
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT_RUN_ID: ${{ github.run_id }}
+          KEEP_RUNS: 20
+          WORKFLOW_FILE: auto-update-dlls.yml
         run: |
-          # GitHub normally does not allow a still-running workflow to reliably delete itself.
-          # Keep this as best-effort; completed no-update runs may still remain in the Actions UI.
-          gh api -X DELETE "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          set -euo pipefail
+
+          run_ids="$(gh api --paginate "repos/${{ github.repository }}/actions/workflows/${WORKFLOW_FILE}/runs?per_page=100&event=schedule&status=completed" \
+            --jq '.workflow_runs[]
+              | select(.id != (env.CURRENT_RUN_ID | tonumber))
+              | select(.conclusion == "success")
+              | .id')"
+
+          old_runs=()
+          if [ -n "$run_ids" ]; then
+            mapfile -t old_runs < <(printf '%s\n' "$run_ids" | tail -n +"$((KEEP_RUNS + 1))")
+          fi
+
+          if [ "${#old_runs[@]}" -eq 0 ]; then
+            echo "No old scheduled workflow runs to delete."
+            exit 0
+          fi
+
+          printf 'Deleting %s old scheduled workflow runs, keeping latest %s.\n' "${#old_runs[@]}" "$KEEP_RUNS"
+          for run_id in "${old_runs[@]}"; do
+            echo "Deleting workflow run $run_id"
+            gh api -X DELETE "repos/${{ github.repository }}/actions/runs/$run_id" >/dev/null
+          done
