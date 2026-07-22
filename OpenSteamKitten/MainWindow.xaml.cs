@@ -5,8 +5,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -79,6 +81,9 @@ namespace OpenSteamKitten
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // 从 Alt+Tab 切换列表中隐藏：将窗口设为工具窗口
+            HideFromAltTab();
+
             // 确保窗口在屏幕可见区域内
             EnsureWindowVisible();
 
@@ -88,6 +93,32 @@ namespace OpenSteamKitten
 
             if (GameVisibilityService.IsEnabled())
                 StartGameVisibility();
+        }
+
+        // Alt+Tab 相关的 Win32 扩展窗口样式
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_TOOLWINDOW = 0x00000080;
+        private const int WS_EX_APPWINDOW = 0x00040000;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern int GetWindowLong(IntPtr hwnd, int index);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
+
+        /// <summary>
+        /// 把窗口标记为工具窗口，使其不出现在 Alt+Tab 切换列表中。
+        /// </summary>
+        private void HideFromAltTab()
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            if (hwnd == IntPtr.Zero)
+                return;
+
+            int exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            // 工具窗口不进 Alt+Tab；同时清掉 APPWINDOW 以免被强制显示
+            exStyle = (exStyle | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW;
+            SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
         }
 
         private void EnsureWindowVisible()
