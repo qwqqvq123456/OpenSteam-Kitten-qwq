@@ -32,7 +32,7 @@ Resources/
 
 - 一键安装 `OpenSteamTool.dll`、`dwmapi.dll`、`xinput1_4.dll` 到 Steam 根目录。
 - 一键清理已安装 DLL、Lua 配置、manifest 文件。
-- 托盘常驻，可隐藏/显示悬浮窗。
+- 托盘常驻，可隐藏/显示悬浮窗；悬浮窗不会出现在任务栏或 Alt+Tab 切换列表中。
 - 可设置随 Steam 启动。
 - 可开启“Steam 游戏时隐藏悬浮窗”：当前前台进程加载 Steam Overlay 时隐藏小猫，切出游戏后恢复。
 - 内置更新检查，发布包会通过 `version.json` 里的 SHA256/size 校验关键文件。
@@ -55,7 +55,7 @@ dotnet run --project OpenSteamKitten
 本地发布精简版：
 
 ```powershell
-.\build-release.ps1 -Version 1.4.1
+.\build-release.ps1 -Version 1.4.2
 ```
 
 产物输出到 `dist/`，不要把 exe、zip、publish 输出放到仓库根目录。
@@ -96,6 +96,7 @@ OpenSteam-Kitten/
 ## 致谢
 
 - [OpenSteamTool](https://github.com/OpenSteam001/OpenSteamTool)
+- [@ErrorRua](https://github.com/ErrorRua)：贡献 [PR #2：悬浮窗从 Alt+Tab 切换列表中隐藏](https://github.com/justamokou/OpenSteam-Kitten/pull/2)
 
 ## 许可证
 
