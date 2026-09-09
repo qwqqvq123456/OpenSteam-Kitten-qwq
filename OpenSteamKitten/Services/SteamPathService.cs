@@ -63,7 +63,7 @@ namespace OpenSteamKitten.Services
             if (string.IsNullOrEmpty(steamPath))
                 throw new InvalidOperationException("未找到 Steam 安装路径");
 
-            return Path.Combine(steamPath, "config", "depotcache");
+            return Path.Combine(steamPath, "depotcache");
         }
     }
 }

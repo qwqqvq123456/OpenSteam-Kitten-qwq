@@ -24,8 +24,8 @@ Resources/
 | 双击悬浮窗 | 启动 Steam |
 | 右键悬浮窗 | 打开功能菜单 |
 | 拖入 `.lua` | 复制到 `Steam/config/lua/` |
-| 拖入 `.manifest` | 复制到 `Steam/config/depotcache/` |
-| Ctrl + 拖入文件 | 删除 Steam 配置目录里的对应文件 |
+| 拖入 `.manifest` | 复制到 `Steam/depotcache/` |
+| Ctrl + 拖入文件 | 删除 Steam 对应目录里的文件 |
 | 拖动悬浮窗 | 移动位置 |
 
 ## 主要功能

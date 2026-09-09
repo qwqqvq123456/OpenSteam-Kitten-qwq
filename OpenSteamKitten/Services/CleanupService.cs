@@ -16,7 +16,7 @@ namespace OpenSteamKitten.Services
     /// 清理 OpenSteamTool 写入 Steam 目录的产物。支持按类别独立清理：
     ///   Dll      — 3 个内核 DLL（删除前需关闭 Steam，文件被占用）。
     ///   Lua      — config/lua/*.lua。
-    ///   Manifest — config/depotcache/*.manifest（仅 .manifest，不动 .bin 等 Steam 缓存）。
+    ///   Manifest — depotcache/*.manifest（仅 .manifest，不动 .bin 等 Steam 缓存）。
     /// 对称反向操作——只删「安装路径」曾写入的东西，绝不越界删 Steam 自身文件。
     /// 提示流程仿 InstallService：占用提示（仅 Dll）→ 确认 → 执行 → 结果。
     /// </summary>
@@ -118,7 +118,7 @@ namespace OpenSteamKitten.Services
             if (scope.HasFlag(CleanupScope.Lua))
                 await DeleteByPatternAsync(Path.Combine(steamPath, "config", "lua"), "*.lua", () => deletedLua++, failed);
             if (scope.HasFlag(CleanupScope.Manifest))
-                await DeleteByPatternAsync(Path.Combine(steamPath, "config", "depotcache"), "*.manifest", () => deletedManifest++, failed);
+                await DeleteByPatternAsync(_steamPathService.GetDepotCacheDirectory(), "*.manifest", () => deletedManifest++, failed);
 
             // 结果框
             var msg = new StringBuilder();
@@ -138,7 +138,7 @@ namespace OpenSteamKitten.Services
         }
 
         /// <summary>统计范围内各类待删文件数量（不删除）。</summary>
-        private static CleanupCounts CountTargets(string steamPath, CleanupScope scope)
+        private CleanupCounts CountTargets(string steamPath, CleanupScope scope)
         {
             var c = new CleanupCounts();
             if (scope.HasFlag(CleanupScope.Dll))
@@ -154,7 +154,7 @@ namespace OpenSteamKitten.Services
 
             if (scope.HasFlag(CleanupScope.Manifest))
             {
-                string depotDir = Path.Combine(steamPath, "config", "depotcache");
+                string depotDir = _steamPathService.GetDepotCacheDirectory();
                 try { if (Directory.Exists(depotDir)) c.Manifest = Directory.EnumerateFiles(depotDir, "*.manifest").Count(); }
                 catch { /* 同上 */ }
             }

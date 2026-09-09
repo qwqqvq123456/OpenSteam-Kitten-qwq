@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "shell": "1.4.2",
+  "shell": "1.4.3",
   "core": "1.4.8",
   "package": null,
   "files": {
     "VERSION": {
-      "sha256": "8ec5a17af8275faf8adc4a9ef9a201cd68d26fe6216e78450e871070a46bbd50",
+      "sha256": "e58bea78c28fe3ded0dd2da92edc44e0644fde51cb299c6616b081775116a2e2",
       "size": 5
     },
     "Resources/dlls/OpenSteamTool.dll": {

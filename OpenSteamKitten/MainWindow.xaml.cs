@@ -273,7 +273,7 @@ namespace OpenSteamKitten
                     if (luaCount > 0)
                         message += $"- {luaCount} 个 Lua 文件 → config/lua/\n";
                     if (manifestCount > 0)
-                        message += $"- {manifestCount} 个 Manifest 文件 → config/depotcache/";
+                        message += $"- {manifestCount} 个 Manifest 文件 → depotcache/";
 
                     MessageBox.Show(
                         this,
@@ -468,7 +468,7 @@ namespace OpenSteamKitten
                 $"安装状态: {installStatus}\n\n" +
                 $"使用说明:\n" +
                 $"• 双击悬浮窗：启动 Steam\n" +
-                $"• 拖入 .lua / .manifest 文件：添加到配置目录\n" +
+                $"• 拖入 .lua / .manifest 文件：添加到对应目录\n" +
                 $"• Ctrl + 拖入：删除对应文件\n" +
                 $"• 右键菜单：更多功能\n\n" +
                 $"项目地址:\n" +
